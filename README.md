@@ -32,10 +32,16 @@ A powerful, highly-configurable Minecraft Paper/Purpur plugin that leverages sta
 
 ### Requirements
 - **Minecraft Server**: Paper, Purpur, or any other compatible fork targeting version **1.20+** (specifically tested on `26.1.2`).
-- **Java**: Java **26** or newer (configured in Maven).
-- **Build Tool**: Maven (to package the source).
+- **Java**: Java **26** or newer.
 
-### Compilation and Setup
+### Quick Start (Precompiled Release)
+1. Go to the [Releases](https://github.com/alanheng1106/AIBuilder/releases) page.
+2. Download the latest `AIBuilder-1.0.0.jar` release package.
+3. Drop the JAR file into your Minecraft server's `plugins/` directory.
+4. Start (or restart) your Minecraft server.
+
+### Build from Source
+If you prefer to compile the plugin yourself:
 1. Clone this repository to your build machine.
 2. Compile and package the plugin using Maven:
    ```bash
