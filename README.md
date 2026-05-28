@@ -146,3 +146,10 @@ For local model execution or hosting Ollama on another server.
 3. **Placing & Rendering**: Right-clicking a block with the Placer stick starts a scheduler. It translates the cuboids relative to the clicked block and places them in batches (customizable via `blocks-per-batch` and `delay-between-batches`) to avoid lag and provide a beautiful construction animation.
 4. **Quota Verification**: The plugin deducts the placed block count from the player's daily limit (saved in `quota.yml` under your plugin data folder). If the player runs out of quota, they cannot build further unless they are OP or wait for the daily reset.
 5. **Transactional Undo**: The coordinates of the blocks placed are stored per player. `/aiundo` restores the original blocks (reverting the landscape) and refunds the player's quota.
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](file:///mnt/sda1/AIBuilder/LICENSE) file for details.
+
