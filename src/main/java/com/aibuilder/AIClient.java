@@ -54,7 +54,7 @@ public class AIClient {
                 "- For a single block: {\"x\": x, \"y\": y, \"z\": z, \"type\": \"MATERIAL\"}\n" +
                 "- For a cuboid region fill (use this for floors, walls, columns, roofs): {\"x1\": x1, \"y1\": y1, \"z1\": z1, \"x2\": x2, \"y2\": y2, \"z2\": z2, \"type\": \"MATERIAL\"}\n\n" +
                 "Coordinates are relative to the player's position (0,0,0 is the player's foot level; positive X is East, positive Y is Up, positive Z is South).\n\n" +
-                "Design Rules for Premium Aesthetics:\n" +
+                "Strict Architectural Rules for Premium Aesthetics:\n" +
                 "1. Structured Palette: Never build using only a single block type. Use a harmonious combination of 3-5 blocks. E.g., for medieval/traditional, use cobblestone/stone_bricks for foundation/floor, logs (like OAK_LOG) for structural pillars/corners, planks (like OAK_PLANKS) for walls, and darker stairs (like DARK_OAK_STAIRS or STONE_BRICK_STAIRS) for the roof. For modern, use quartz_block, dark_oak_planks, and black_stained_glass.\n" +
                 "2. Roof Overhang & Pitch: Avoid flat roof boxes unless explicitly requested. Build sloped roofs using stairs or slabs. The roof must overhang the walls by at least 1 block on all sides to create realistic depth.\n" +
                 "3. Wall Depth & Pillars: Avoid flat, featureless walls. Place wooden log pillars at the corners and frame the walls. Include glass blocks/panes for windows and add doors.\n" +
@@ -62,7 +62,29 @@ public class AIClient {
                 "5. Standard Material Names: Use valid uppercase Minecraft Java Edition Material names (e.g. STONE_BRICKS, OAK_LOG, OAK_PLANKS, GLASS_PANE, OAK_STAIRS, TORCH, RED_BED, CHEST, CRAFTING_TABLE, FURNACE).\n" +
                 "6. Size Constraints: The build must fit within " + maxDimension + "x" + maxDimension + "x" + maxDimension + " blocks and not exceed a total block limit of " + maxBlocks + ".\n" +
                 "7. Element Count: Limit the total number of JSON array elements to under " + maxElements + " by representing large structures (like floors, walls, and roofs) as cuboid fills, and using single blocks only for detailing and furniture. This ensures fast API response times without sacrificing beauty.\n" +
-                "8. Output: Output ONLY the raw JSON array. Example: [{\"x1\":-2,\"y1\":0,\"z1\":-2,\"x2\":2,\"y2\":0,\"z2\":2,\"type\":\"STONE_BRICKS\"},{\"x\":0,\"y\":1,\"z\":0,\"type\":\"CHEST\"}]";
+                "8. FEW-SHOT EXAMPLE OF A BEAUTIFUL 5x5 COTTAGE:\n" +
+                "[\n" +
+                "  {\"x1\":-2,\"y1\":0,\"z1\":-2,\"x2\":2,\"y2\":0,\"z2\":2,\"type\":\"STONE_BRICKS\"}, \n" +
+                "  {\"x1\":-2,\"y1\":1,\"z1\":-2,\"x2\":-2,\"y2\":3,\"z2\":-2,\"type\":\"OAK_LOG\"}, \n" +
+                "  {\"x1\":2,\"y1\":1,\"z1\":-2,\"x2\":2,\"y2\":3,\"z2\":-2,\"type\":\"OAK_LOG\"}, \n" +
+                "  {\"x1\":-2,\"y1\":1,\"z1\":2,\"x2\":-2,\"y2\":3,\"z2\":2,\"type\":\"OAK_LOG\"}, \n" +
+                "  {\"x1\":2,\"y1\":1,\"z1\":2,\"x2\":2,\"y2\":3,\"z2\":2,\"type\":\"OAK_LOG\"}, \n" +
+                "  {\"x1\":-2,\"y1\":1,\"z1\":-1,\"x2\":-2,\"y2\":3,\"z2\":1,\"type\":\"OAK_PLANKS\"}, \n" +
+                "  {\"x1\":2,\"y1\":1,\"z1\":-1,\"x2\":2,\"y2\":3,\"z2\":1,\"type\":\"OAK_PLANKS\"}, \n" +
+                "  {\"x1\":-1,\"y1\":1,\"z1\":2,\"x2\":1,\"y2\":3,\"z2\":2,\"type\":\"OAK_PLANKS\"}, \n" +
+                "  {\"x1\":-1,\"y1\":1,\"z1\":-2,\"x2\":-1,\"y2\":3,\"z2\":-2,\"type\":\"OAK_PLANKS\"}, \n" +
+                "  {\"x1\":1,\"y1\":1,\"z1\":-2,\"x2\":1,\"y2\":3,\"z2\":-2,\"type\":\"OAK_PLANKS\"}, \n" +
+                "  {\"x\":-2,\"y\":2,\"z\":0,\"type\":\"GLASS_PANE\"}, \n" +
+                "  {\"x\":2,\"y\":2,\"z\":0,\"type\":\"GLASS_PANE\"}, \n" +
+                "  {\"x\":0,\"y\":2,\"z\":2,\"type\":\"GLASS_PANE\"}, \n" +
+                "  {\"x\":0,\"y\":1,\"z\":-2,\"type\":\"SPRUCE_DOOR\"}, \n" +
+                "  {\"x1\":-3,\"y1\":4,\"z1\":-3,\"x2\":3,\"y2\":4,\"z2\":3,\"type\":\"SPRUCE_SLAB\"}, \n" +
+                "  {\"x1\":-2,\"y1\":5,\"z1\":-2,\"x2\":2,\"y2\":5,\"z2\":2,\"type\":\"SPRUCE_SLAB\"}, \n" +
+                "  {\"x\":-1,\"y\":1,\"z\":1,\"type\":\"RED_BED\"}, \n" +
+                "  {\"x\":1,\"y\":1,\"z\":1,\"type\":\"CHEST\"}, \n" +
+                "  {\"x\":-1,\"y\":1,\"z\":0,\"type\":\"CRAFTING_TABLE\"}, \n" +
+                "  {\"x\":0,\"y\":3,\"z\":0,\"type\":\"TORCH\"}\n" +
+                "]";
 
         if ("openai".equals(provider)) {
             return callOpenAI(systemInstruction, userPrompt);
