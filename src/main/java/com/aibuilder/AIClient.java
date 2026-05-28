@@ -41,26 +41,28 @@ public class AIClient {
      * Sends a prompt to the configured AI model asynchronously and returns the raw JSON list of blocks.
      */
     public CompletableFuture<String> generateStructure(String userPrompt, String scale) {
-        int maxElements = 20;
+        int maxElements = 45;
         if ("small".equalsIgnoreCase(scale)) {
-            maxElements = 10;
+            maxElements = 25;
         } else if ("large".equalsIgnoreCase(scale)) {
-            maxElements = 40;
+            maxElements = 120;
         }
 
-        String systemInstruction = "You are a professional Minecraft building assistant. Your task is to design a build based on the user's prompt. " +
-                "You must output ONLY a valid JSON array of block placements. Do not include any explanation, markdown codeblocks (like ```json), or extra text outside the JSON. " +
-                "To optimize generation speed and support large builds, you can define individual blocks OR cuboid fill regions. " +
+        String systemInstruction = "You are a professional Minecraft building architect. Your task is to design an exceptionally beautiful, realistic, and detailed build based on the user's prompt.\n" +
+                "You must output ONLY a valid JSON array of block placements. Do not include any explanation, markdown codeblocks (like ```json), or extra text outside the JSON.\n\n" +
                 "Each object in the JSON array must match one of these structures:\n" +
                 "- For a single block: {\"x\": x, \"y\": y, \"z\": z, \"type\": \"MATERIAL\"}\n" +
-                "- For a cuboid region fill (highly recommended for floors, walls, columns, roofs): {\"x1\": x1, \"y1\": y1, \"z1\": z1, \"x2\": x2, \"y2\": y2, \"z2\": z2, \"type\": \"MATERIAL\"}\n" +
-                "Coordinates are relative to the player's position (0,0,0 is the player's foot level, positive X is East, positive Y is Up, positive Z is South). " +
-                "Guidelines:\n" +
-                "1. Scale and Area: The structure should fit within an area of up to " + maxDimension + "x" + maxDimension + "x" + maxDimension + " blocks. Design it beautifully, realistically, and logically.\n" +
-                "2. Interior and Furniture: For habitable or hollow structures (like houses, cabins, towers), do not leave the inside completely empty. Design functional and matching furniture inside (e.g. beds, chests, tables using slabs/stairs, bookshelves, lighting like torches/glowstone). Keep the layout clean, open, and logical.\n" +
-                "3. Max Blocks Limit: Max blocks allowed: " + maxBlocks + ". Ensure the total count of blocks in the cuboids does not exceed this.\n" +
-                "4. CRITICAL SPEED OPTIMIZATION: Keep the total number of JSON elements in the array under " + maxElements + " (use large cuboids for floors, walls, and ceiling; and single blocks or small cuboids for furniture). Every extra JSON element directly increases API response times. Use simple block compromises for furniture (e.g. OAK_STAIRS for a chair, OAK_SLAB for a table) rather than trying to build complex multi-block furniture. Fewer elements generate significantly faster (under 3 seconds).\n" +
-                "5. Raw Output: Output ONLY the raw JSON array. Example: [{\"x1\":-2,\"y1\":0,\"z1\":-2,\"x2\":2,\"y2\":0,\"z2\":2,\"type\":\"STONE\"},{\"x\":0,\"y\":1,\"z\":0,\"type\":\"CHEST\"}]";
+                "- For a cuboid region fill (use this for floors, walls, columns, roofs): {\"x1\": x1, \"y1\": y1, \"z1\": z1, \"x2\": x2, \"y2\": y2, \"z2\": z2, \"type\": \"MATERIAL\"}\n\n" +
+                "Coordinates are relative to the player's position (0,0,0 is the player's foot level; positive X is East, positive Y is Up, positive Z is South).\n\n" +
+                "Design Rules for Premium Aesthetics:\n" +
+                "1. Structured Palette: Never build using only a single block type. Use a harmonious combination of 3-5 blocks. E.g., for medieval/traditional, use cobblestone/stone_bricks for foundation/floor, logs (like OAK_LOG) for structural pillars/corners, planks (like OAK_PLANKS) for walls, and darker stairs (like DARK_OAK_STAIRS or STONE_BRICK_STAIRS) for the roof. For modern, use quartz_block, dark_oak_planks, and black_stained_glass.\n" +
+                "2. Roof Overhang & Pitch: Avoid flat roof boxes unless explicitly requested. Build sloped roofs using stairs or slabs. The roof must overhang the walls by at least 1 block on all sides to create realistic depth.\n" +
+                "3. Wall Depth & Pillars: Avoid flat, featureless walls. Place wooden log pillars at the corners and frame the walls. Include glass blocks/panes for windows and add doors.\n" +
+                "4. Detailed Interiors: For habitable structures, decorate the interior with matching furniture (e.g. beds, chests, tables using slabs/stairs, bookshelves, crafting tables, furnaces) and ensure proper lighting (e.g. torches, lanterns, glowstone) so it isn't dark inside.\n" +
+                "5. Standard Material Names: Use valid uppercase Minecraft Java Edition Material names (e.g. STONE_BRICKS, OAK_LOG, OAK_PLANKS, GLASS_PANE, OAK_STAIRS, TORCH, RED_BED, CHEST, CRAFTING_TABLE, FURNACE).\n" +
+                "6. Size Constraints: The build must fit within " + maxDimension + "x" + maxDimension + "x" + maxDimension + " blocks and not exceed a total block limit of " + maxBlocks + ".\n" +
+                "7. Element Count: Limit the total number of JSON array elements to under " + maxElements + " by representing large structures (like floors, walls, and roofs) as cuboid fills, and using single blocks only for detailing and furniture. This ensures fast API response times without sacrificing beauty.\n" +
+                "8. Output: Output ONLY the raw JSON array. Example: [{\"x1\":-2,\"y1\":0,\"z1\":-2,\"x2\":2,\"y2\":0,\"z2\":2,\"type\":\"STONE_BRICKS\"},{\"x\":0,\"y\":1,\"z\":0,\"type\":\"CHEST\"}]";
 
         if ("openai".equals(provider)) {
             return callOpenAI(systemInstruction, userPrompt);
