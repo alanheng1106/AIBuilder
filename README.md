@@ -67,10 +67,10 @@ provider: "gemini"
 api-key: ""
 
 # The model name to use.
-# For Gemini: gemini-1.5-flash, gemini-1.5-pro, gemini-2.5-flash, etc.
-# For OpenAI: gpt-4o, gpt-4o-mini, etc.
+# For Gemini: gemini-3.5-flash, gemini-3.1-pro, gemini-3.1-flash-lite, etc.
+# For OpenAI: gpt-5.5, gpt-5.4, gpt-5.4-mini, etc.
 # For Ollama: llama3, mistral, codellama, etc.
-model: "gemini-1.5-flash"
+model: "gemini-3.5-flash"
 
 # Custom API endpoint URL. Leave blank to use the default for the chosen provider.
 #   Gemini:  https://generativelanguage.googleapis.com
@@ -116,14 +116,14 @@ Set the `provider` in `config.yml` to `"gemini"`. You can either:
 - Paste your API key in the `api-key` field of `config.yml`.
 - Or set the `GEMINI_API_KEY` environment variable in your server's startup script.
 
-Recommended models: `gemini-1.5-flash` (fast & cheap), `gemini-1.5-pro` or `gemini-2.5-flash`.
+Recommended models: `gemini-3.5-flash` (fast & cheap), `gemini-3.1-pro` or `gemini-3.1-flash-lite`.
 
 ### 2. OpenAI
 Set the `provider` in `config.yml` to `"openai"`. You can either:
 - Paste your API key in the `api-key` field of `config.yml`.
 - Or set the `OPENAI_API_KEY` environment variable.
 
-Recommended models: `gpt-4o-mini` (fast and highly efficient) or `gpt-4o`.
+Recommended models: `gpt-5.4-mini` (fast and highly efficient), `gpt-5.4`, or `gpt-5.5`.
 
 ### 3. Ollama
 For local model execution or hosting Ollama on another server.
