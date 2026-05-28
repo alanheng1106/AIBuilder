@@ -1,0 +1,39 @@
+name: AIBuilder
+version: 1.0.0
+main: com.aibuilder.AIBuilderPlugin
+api-version: '1.20'
+description: A plugin that allows players to generate structures using AI models.
+authors: [ Antigravity ]
+commands:
+  aibuild:
+    description: Generate a structure using AI.
+    aliases: [ aib ]
+    permission: aibuilder.command.build
+    usage: /aibuild <prompt>
+  aiundo:
+    description: Undo the last AI build.
+    aliases: [ aiu ]
+    permission: aibuilder.command.undo
+    usage: /aiundo
+  aireload:
+    description: Reload the AIBuilder configuration.
+    permission: aibuilder.command.reload
+    usage: /aireload
+  aiquota:
+    description: Check your daily block quota status.
+    aliases: [ aiq ]
+    permission: aibuilder.command.quota
+    usage: /aiquota
+permissions:
+  aibuilder.command.build:
+    description: Allows using the /aibuild command.
+    default: op
+  aibuilder.command.undo:
+    description: Allows using the /aiundo command.
+    default: op
+  aibuilder.command.reload:
+    description: Allows using the /aireload command.
+    default: op
+  aibuilder.command.quota:
+    description: Allows using the /aiquota command.
+    default: true
