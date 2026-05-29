@@ -31,7 +31,7 @@ public class PlacementListener implements Listener {
         if (item == null || item.getType() != Material.STICK || !item.hasItemMeta()) return;
 
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || !"§a§lAI Build Placer".equals(meta.getDisplayName())) return;
+        if (meta == null || !plugin.getLanguageManager().getMessage("placer-name").equals(meta.getDisplayName())) return;
 
         // Cancel standard block interaction
         event.setCancelled(true);
@@ -41,7 +41,7 @@ public class PlacementListener implements Listener {
 
         List<BuildTask.BlockPlacement> placements = plugin.getPendingBuild(uuid);
         if (placements == null || placements.isEmpty()) {
-            player.sendMessage("§c[AI Builder] You do not have any pending designs. Run /aibuild <prompt> first!");
+            player.sendMessage(plugin.getLanguageManager().getMessage("no-pending-design"));
             return;
         }
 
@@ -74,7 +74,7 @@ public class PlacementListener implements Listener {
         if (delayBetweenBatches <= 0) {
             buildTask.executeInstant();
         } else {
-            player.sendMessage("§a[AI Builder] Placement confirmed! Commencing build (" + placements.size() + " blocks)...");
+            player.sendMessage(plugin.getLanguageManager().getMessage("confirm-placement", placements.size()));
             buildTask.runTaskTimer(plugin, 0L, delayBetweenBatches);
         }
     }

@@ -1,4 +1,5 @@
-# AI Builder Configuration
+# Language to use for messages. Built-in: "en" (English), "zh" (Chinese)
+lang: "en"
 
 # The AI provider to use. Supported: "gemini", "openai", "deepseek", "ollama"
 provider: "gemini"

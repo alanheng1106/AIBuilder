@@ -110,7 +110,7 @@ public class BuildTask extends BukkitRunnable {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player != null && player.isOnline()) {
             sendProgressBar(player, placements.size(), placements.size());
-            player.sendMessage("§a[AI Builder] Build completed! Placed " + placedCount + " blocks instantly. Use /aiundo to undo.");
+            player.sendMessage(plugin.getLanguageManager().getMessage("build-completed-instant", placedCount));
         }
     }
 
@@ -140,7 +140,7 @@ public class BuildTask extends BukkitRunnable {
             plugin.getQuotaManager().addUsedQuota(playerUUID, placedCount);
             if (player != null && player.isOnline()) {
                 sendProgressBar(player, placements.size(), placements.size());
-                player.sendMessage("§a[AI Builder] Build completed! Placed " + placedCount + " blocks. Use /aiundo to undo.");
+                player.sendMessage(plugin.getLanguageManager().getMessage("build-completed", placedCount));
             }
             cancel();
         }
@@ -152,7 +152,7 @@ public class BuildTask extends BukkitRunnable {
         int barLength = 20;
         int filledLength = (current * barLength) / total;
 
-        StringBuilder bar = new StringBuilder("§eBuilding: §a[");
+        StringBuilder bar = new StringBuilder(plugin.getLanguageManager().getMessage("progress-bar-title"));
         for (int i = 0; i < barLength; i++) {
             if (i < filledLength) {
                 bar.append("█");

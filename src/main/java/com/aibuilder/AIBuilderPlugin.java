@@ -15,11 +15,15 @@ public final class AIBuilderPlugin extends JavaPlugin {
     // Map to store player's pending designs before placement
     private final Map<UUID, List<BuildTask.BlockPlacement>> pendingBuilds = new ConcurrentHashMap<>();
     private QuotaManager quotaManager;
+    private LanguageManager languageManager;
 
     @Override
     public void onEnable() {
         // Save default config.yml if not already present
         saveDefaultConfig();
+
+        // Initialize Language Manager
+        languageManager = new LanguageManager(this);
 
         // Initialize Quota Manager
         quotaManager = new QuotaManager(this);
@@ -47,6 +51,18 @@ public final class AIBuilderPlugin extends JavaPlugin {
 
     public QuotaManager getQuotaManager() {
         return quotaManager;
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
+    }
+
+    @Override
+    public void reloadConfig() {
+        super.reloadConfig();
+        if (languageManager != null) {
+            languageManager.load();
+        }
     }
 
     public void setPendingBuild(UUID uuid, List<BuildTask.BlockPlacement> placements) {

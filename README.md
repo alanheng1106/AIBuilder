@@ -13,6 +13,7 @@ A powerful, highly-configurable Minecraft Paper/Purpur plugin that leverages sta
 - **AI Build Placer Tool**: When generation completes, the plugin prompts you with a confirmation message and gives you a special placement stick. Right-click any block to place the structure exactly where you want.
 - **Robust Quota System**: Limit block placements with a customizable daily quota per player. OP players bypass this quota automatically.
 - **Transactional Undo**: Made a mistake or don't like the AI's build? Use `/aiundo` to instantly remove the structure and refund your daily block quota.
+- **Multi-language support**: Configurable localization file support (built-in translations for English and Chinese).
 - **Adventure API Powered UI**: A polished, modern, and emoji-free chat panel interface.
 
 ---
@@ -61,27 +62,31 @@ If you prefer to compile the plugin yourself:
 The plugin can be fully customized through its `config.yml` file. Below is a breakdown of the available settings:
 
 ```yaml
-# AI Builder Configuration
+# Language to use for messages. Built-in: "en" (English), "zh" (Chinese)
+lang: "en"
 
-# The AI provider to use. Supported: "gemini", "openai", "ollama"
+# The AI provider to use. Supported: "gemini", "openai", "deepseek", "ollama"
 provider: "gemini"
 
-# API Key for the provider. If empty, the plugin checks environment variables.
-# Gemini:  GEMINI_API_KEY
-# OpenAI:  OPENAI_API_KEY
-# Ollama:  OLLAMA_API_KEY (optional — leave blank for local Ollama without auth)
+# API Key for the provider. If empty, the plugin will check the environment variables.
+# Gemini:    GEMINI_API_KEY
+# OpenAI:    OPENAI_API_KEY
+# DeepSeek:  DEEPSEEK_API_KEY
+# Ollama:    OLLAMA_API_KEY (optional — leave blank for local Ollama with no auth)
 api-key: ""
 
 # The model name to use.
-# For Gemini: gemini-3.5-flash, gemini-3.1-pro, gemini-3.1-flash-lite, etc.
-# For OpenAI: gpt-5.5, gpt-5.4, gpt-5.4-mini, etc.
-# For Ollama: llama3, mistral, codellama, etc.
+# For Gemini:   gemini-3.5-flash, gemini-3.1-pro, gemini-3.1-flash-lite, etc.
+# For OpenAI:   gpt-5.5, gpt-5.4, gpt-5.4-mini, etc.
+# For DeepSeek: deepseek-chat, etc.
+# For Ollama:   llama3, mistral, codellama, etc.
 model: "gemini-3.5-flash"
 
-# Custom API endpoint URL. Leave blank to use the default for the chosen provider.
-#   Gemini:  https://generativelanguage.googleapis.com
-#   OpenAI:  https://api.openai.com
-#   Ollama:  http://localhost:11434 (override to point at custom cloud hosts)
+# Custom API endpoint URL. Leave blank to use the default for the chosen provider:
+#   Gemini:    https://generativelanguage.googleapis.com
+#   OpenAI:    https://api.openai.com
+#   DeepSeek:  https://api.deepseek.com
+#   Ollama:    http://localhost:11434  (override to point at an Ollama cloud host)
 api-url: ""
 
 # Building speed settings:

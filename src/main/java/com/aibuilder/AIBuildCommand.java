@@ -36,16 +36,16 @@ public class AIBuildCommand implements CommandExecutor {
             @NotNull String[] args) {
         if ("aireload".equalsIgnoreCase(command.getName())) {
             if (!sender.hasPermission("aibuilder.command.reload")) {
-                sender.sendMessage("§cYou do not have permission to execute this command.");
+                sender.sendMessage(plugin.getLanguageManager().getMessage("no-permission"));
                 return true;
             }
             plugin.reloadConfig();
-            sender.sendMessage("§a[AI Builder] Configuration reloaded successfully.");
+            sender.sendMessage(plugin.getLanguageManager().getMessage("config-reloaded"));
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("§cOnly players can execute this command.");
+            sender.sendMessage(plugin.getLanguageManager().getMessage("only-players"));
             return true;
         }
 
@@ -54,35 +54,35 @@ public class AIBuildCommand implements CommandExecutor {
 
         if ("aiquota".equalsIgnoreCase(command.getName())) {
             if (!player.hasPermission("aibuilder.command.quota")) {
-                player.sendMessage("§cYou do not have permission to execute this command.");
+                player.sendMessage(plugin.getLanguageManager().getMessage("no-permission"));
                 return true;
             }
             int used = plugin.getQuotaManager().getUsedQuota(uuid);
             int limit = plugin.getConfig().getInt("daily-block-quota", 10000);
 
-            player.sendMessage("§e=== [AI Builder Daily Quota] ===");
+            player.sendMessage(plugin.getLanguageManager().getMessage("quota-header"));
             if (limit == -1) {
-                player.sendMessage("§7- Daily Limit: §aUnlimited");
+                player.sendMessage(plugin.getLanguageManager().getMessage("quota-limit-unlimited"));
             } else {
-                player.sendMessage("§7- Daily Limit: §a" + String.format("%,d", limit) + " blocks");
+                player.sendMessage(plugin.getLanguageManager().getMessage("quota-limit-blocks", String.format("%,d", limit)));
             }
-            player.sendMessage("§7- Used Today: §f" + String.format("%,d", used) + " blocks");
+            player.sendMessage(plugin.getLanguageManager().getMessage("quota-used", String.format("%,d", used)));
             if (limit != -1) {
                 int remaining = Math.max(0, limit - used);
-                player.sendMessage("§7- Remaining: §e" + String.format("%,d", remaining) + " blocks");
+                player.sendMessage(plugin.getLanguageManager().getMessage("quota-remaining", String.format("%,d", remaining)));
             }
             return true;
         }
 
         if ("aiundo".equalsIgnoreCase(command.getName())) {
             if (!player.hasPermission("aibuilder.command.undo")) {
-                player.sendMessage("§cYou do not have permission to execute this command.");
+                player.sendMessage(plugin.getLanguageManager().getMessage("no-permission"));
                 return true;
             }
 
             List<BlockState> history = plugin.getUndoHistory(uuid);
             if (history == null || history.isEmpty()) {
-                player.sendMessage("§c[AI Builder] You do not have any recent build to undo.");
+                player.sendMessage(plugin.getLanguageManager().getMessage("undo-no-recent"));
                 return true;
             }
 
@@ -97,7 +97,7 @@ public class AIBuildCommand implements CommandExecutor {
             // Refund daily quota
             plugin.getQuotaManager().addUsedQuota(uuid, -count);
 
-            player.sendMessage("§a[AI Builder] Undo completed! Restored " + count + " blocks. Daily quota refunded.");
+            player.sendMessage(plugin.getLanguageManager().getMessage("undo-success", count));
             player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
             return true;
         }
@@ -172,33 +172,32 @@ public class AIBuildCommand implements CommandExecutor {
             }
 
             if ((apiKey == null || apiKey.isBlank()) && !"ollama".equalsIgnoreCase(provider)) {
-                player.sendMessage(
-                        "§c[AI Builder] API Key is not configured! Please configure 'api-key' in config.yml or set the corresponding environment variable (" + provider.toUpperCase() + "_API_KEY).");
+                player.sendMessage(plugin.getLanguageManager().getMessage("api-key-missing", provider.toUpperCase()));
                 return true;
             }
 
             // Get base location at player's current block
             Location baseLocation = player.getLocation().getBlock().getLocation();
 
-            player.sendMessage("§e[AI Builder] Requesting the AI to design a §a" + scale + "§e structure (max "
-                    + maxDimension + "x" + maxDimension + "x" + maxDimension + "): §f" + prompt + "§e... Please wait.");
+            player.sendMessage(plugin.getLanguageManager().getMessage("requesting-ai", scale, maxDimension, prompt));
 
             // Start animated loading action bar while asking
             org.bukkit.scheduler.BukkitTask loadingTask = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
                 int tick = 0;
                 final String[] frames = {
-                        "§eAI is designing §a[=   ]",
-                        "§eAI is designing §a[ =  ]",
-                        "§eAI is designing §a[  = ]",
-                        "§eAI is designing §a[   =]",
-                        "§eAI is designing §a[  = ]",
-                        "§eAI is designing §a[ =  ]"
+                        "=   ",
+                        " =  ",
+                        "  = ",
+                        "   =",
+                        "  = ",
+                        " =  "
                 };
 
                 @Override
                 public void run() {
+                    String designMsg = plugin.getLanguageManager().getMessage("ai-designing", frames[tick % frames.length]);
                     player.sendActionBar(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-                            .legacySection().deserialize(frames[tick % frames.length]));
+                            .legacySection().deserialize(designMsg));
                     tick++;
                 }
             }, 0L, 5L);
@@ -216,7 +215,7 @@ public class AIBuildCommand implements CommandExecutor {
                 if (throwable != null) {
                     Throwable cause = throwable.getCause() != null ? throwable.getCause() : throwable;
                     Bukkit.getScheduler().runTask(plugin, () -> {
-                        player.sendMessage("§c[AI Builder] Error calling AI API: " + cause.getMessage());
+                        player.sendMessage(plugin.getLanguageManager().getMessage("ai-error", cause.getMessage()));
                     });
                     return null;
                 }
@@ -228,22 +227,19 @@ public class AIBuildCommand implements CommandExecutor {
                         List<BuildTask.BlockPlacement> placements = gson.fromJson(jsonResult, type);
 
                         if (placements == null || placements.isEmpty()) {
-                            player.sendMessage("§c[AI Builder] AI returned an empty structural design.");
+                            player.sendMessage(plugin.getLanguageManager().getMessage("empty-design"));
                             return;
                         }
 
                         if (placements.size() > maxBlocks) {
-                            player.sendMessage("§c[AI Builder] AI design contains too many blocks (" + placements.size()
-                                    + " blocks). Limit is " + maxBlocks + ".");
+                            player.sendMessage(plugin.getLanguageManager().getMessage("too-many-blocks", placements.size(), maxBlocks));
                             return;
                         }
 
                         // Post-check quota with parsed block size (bypassed for OP players)
                         int currentUsed = plugin.getQuotaManager().getUsedQuota(uuid);
                         if (!player.isOp() && dailyQuota != -1 && currentUsed + placements.size() > dailyQuota) {
-                            player.sendMessage("§c[AI Builder] This build requires " + placements.size()
-                                    + " blocks, but you only have " + Math.max(0, dailyQuota - currentUsed)
-                                    + " blocks remaining in your daily quota today.");
+                            player.sendMessage(plugin.getLanguageManager().getMessage("insufficient-quota", placements.size(), Math.max(0, dailyQuota - currentUsed)));
                             return;
                         }
 
@@ -255,10 +251,10 @@ public class AIBuildCommand implements CommandExecutor {
                                 org.bukkit.Material.STICK);
                         org.bukkit.inventory.meta.ItemMeta meta = placer.getItemMeta();
                         if (meta != null) {
-                            meta.setDisplayName("§a§lAI Build Placer");
+                            meta.setDisplayName(plugin.getLanguageManager().getMessage("placer-name"));
                             java.util.List<String> lore = new java.util.ArrayList<>();
-                            lore.add("§7Right-click a block to place");
-                            lore.add("§7your designed structure!");
+                            lore.add(plugin.getLanguageManager().getMessage("placer-lore-1"));
+                            lore.add(plugin.getLanguageManager().getMessage("placer-lore-2"));
                             meta.setLore(lore);
                             placer.setItemMeta(meta);
                         }
@@ -268,12 +264,11 @@ public class AIBuildCommand implements CommandExecutor {
                             player.getWorld().dropItem(player.getLocation(), placer);
                         }
 
-                        player.sendMessage(
-                                "§a[AI Builder] Design received! §eRight-click a block with the §a§lAI Build Placer §eto choose where to place the structure.");
+                        player.sendMessage(plugin.getLanguageManager().getMessage("design-received"));
 
                     } catch (Exception e) {
                         plugin.getLogger().severe("Failed to parse block placements JSON: " + jsonResult);
-                        player.sendMessage("§c[AI Builder] Failed to parse AI design structure: " + e.getMessage());
+                        player.sendMessage(plugin.getLanguageManager().getMessage("parse-failed", e.getMessage()));
                     }
                 });
                 return null;
@@ -286,15 +281,19 @@ public class AIBuildCommand implements CommandExecutor {
     }
 
     private void sendSizeMenu(Player player, String prompt) {
+        int maxDimSmall = plugin.getConfig().getInt("scales.small.max-dimension", 15);
+        int maxDimMedium = plugin.getConfig().getInt("scales.medium.max-dimension", 30);
+        int maxDimLarge = plugin.getConfig().getInt("scales.large.max-dimension", 50);
+
+        net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer serializer = 
+                net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand();
+
         // Header
         player.sendMessage(Component.empty());
         player.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 .color(TextColor.color(0x5c5c5c)));
-        player.sendMessage(Component.text(" ✦ AI Builder — Choose a Size")
-                .color(TextColor.color(0xFFD700))
-                .decorate(TextDecoration.BOLD));
-        player.sendMessage(Component.text(" Building: ")
-                .color(TextColor.color(0xAAAAAA))
+        player.sendMessage(serializer.deserialize(plugin.getLanguageManager().getRawMessage("menu-title")));
+        player.sendMessage(serializer.deserialize(plugin.getLanguageManager().getRawMessage("menu-building"))
                 .append(Component.text("\"" + prompt + "\"")
                         .color(TextColor.color(0xFFFFFF))
                         .decorate(TextDecoration.ITALIC)));
@@ -303,28 +302,20 @@ public class AIBuildCommand implements CommandExecutor {
         player.sendMessage(Component.empty());
 
         // Size buttons row
-        TextComponent smallBtn = Component.text(" [ 🪵 Small ] ")
-                .color(TextColor.color(0x55FF55))
-                .decorate(TextDecoration.BOLD)
+        Component smallBtn = serializer.deserialize(plugin.getLanguageManager().getRawMessage("menu-small-btn"))
                 .clickEvent(ClickEvent.runCommand("/aibuild small " + prompt))
-                .hoverEvent(
-                        HoverEvent.showText(Component.text("Small build (15x15x15)\nFastest generation, ~10 elements")
-                                .color(TextColor.color(0x55FF55))));
+                .hoverEvent(HoverEvent.showText(serializer.deserialize(
+                        plugin.getLanguageManager().getRawMessage("menu-small-hover", maxDimSmall, 25))));
 
-        TextComponent mediumBtn = Component.text(" [ 🏠 Medium ] ")
-                .color(TextColor.color(0xFFAA00))
-                .decorate(TextDecoration.BOLD)
+        Component mediumBtn = serializer.deserialize(plugin.getLanguageManager().getRawMessage("menu-medium-btn"))
                 .clickEvent(ClickEvent.runCommand("/aibuild medium " + prompt))
-                .hoverEvent(HoverEvent
-                        .showText(Component.text("Medium build (30x30x30)\nBalanced speed & detail, ~20 elements")
-                                .color(TextColor.color(0xFFAA00))));
+                .hoverEvent(HoverEvent.showText(serializer.deserialize(
+                        plugin.getLanguageManager().getRawMessage("menu-medium-hover", maxDimMedium, 45))));
 
-        TextComponent largeBtn = Component.text(" [ 🏰 Large ] ")
-                .color(TextColor.color(0xFF5555))
-                .decorate(TextDecoration.BOLD)
+        Component largeBtn = serializer.deserialize(plugin.getLanguageManager().getRawMessage("menu-large-btn"))
                 .clickEvent(ClickEvent.runCommand("/aibuild large " + prompt))
-                .hoverEvent(HoverEvent.showText(Component.text("Large build (50x50x50)\nMost detailed, ~40 elements")
-                        .color(TextColor.color(0xFF5555))));
+                .hoverEvent(HoverEvent.showText(serializer.deserialize(
+                        plugin.getLanguageManager().getRawMessage("menu-large-hover", maxDimLarge, 120))));
 
         player.sendMessage(smallBtn.append(mediumBtn).append(largeBtn));
         player.sendMessage(Component.empty());
