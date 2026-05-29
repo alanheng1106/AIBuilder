@@ -156,17 +156,24 @@ public class AIBuildCommand implements CommandExecutor {
             if (apiKey == null || apiKey.isBlank()) {
                 if ("openai".equalsIgnoreCase(provider)) {
                     apiKey = System.getenv("OPENAI_API_KEY");
-                } else {
+                } else if ("deepseek".equalsIgnoreCase(provider)) {
+                    apiKey = System.getenv("DEEPSEEK_API_KEY");
+                } else if ("gemini".equalsIgnoreCase(provider)) {
                     apiKey = System.getenv("GEMINI_API_KEY");
                     if (apiKey == null || apiKey.isBlank()) {
                         apiKey = System.getenv("GEMINI_API_SECRET"); // alternate variable
                     }
+                } else if ("ollama".equalsIgnoreCase(provider)) {
+                    apiKey = System.getenv("OLLAMA_API_KEY");
+                    if (apiKey == null) {
+                        apiKey = ""; // local ollama doesn't require key
+                    }
                 }
             }
 
-            if (apiKey == null || apiKey.isBlank()) {
+            if ((apiKey == null || apiKey.isBlank()) && !"ollama".equalsIgnoreCase(provider)) {
                 player.sendMessage(
-                        "§c[AI Builder] API Key is not configured! Please configure 'api-key' in config.yml or set the corresponding environment variable (GEMINI_API_KEY / OPENAI_API_KEY).");
+                        "§c[AI Builder] API Key is not configured! Please configure 'api-key' in config.yml or set the corresponding environment variable (" + provider.toUpperCase() + "_API_KEY).");
                 return true;
             }
 

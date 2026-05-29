@@ -1,12 +1,12 @@
 # AIBuilder 🏗️
 
-A powerful, highly-configurable Minecraft Paper/Purpur plugin that leverages state-of-the-art AI models (Gemini, OpenAI, and Ollama) to generate buildings and furniture directly in your world. Simply type a description of what you want, select a size, confirm the placement with a specialized selector stick, and watch the AI construct it block-by-block with fluid progress animations.
+A powerful, highly-configurable Minecraft Paper/Purpur plugin that leverages state-of-the-art AI models (Gemini, OpenAI, DeepSeek, and Ollama) to generate buildings and furniture directly in your world. Simply type a description of what you want, select a size, confirm the placement with a specialized selector stick, and watch the AI construct it block-by-block with fluid progress animations.
 
 ---
 
 ## Features
 
-- **Multi-Provider AI support**: Seamless integration with **Google Gemini** (default), **OpenAI**, and **Ollama** (for local/self-hosted or custom cloud models).
+- **Multi-Provider AI support**: Seamless integration with **Google Gemini** (default), **OpenAI**, **DeepSeek**, and **Ollama** (for local/self-hosted or custom cloud models).
 - **Interactive Building Sizes**: Choose between **Small**, **Medium**, or **Large** building scales. If you don't specify a size in the command, an interactive UI menu will guide you.
 - **Smart Structure Generation**: Builds are not just empty shells; they include detailed interior designs and furniture.
 - **Animated Batched Placement**: Blocks are placed sequentially with a configurable speed, complete with progress updates on your Action Bar, sound effects, and particle animations.
@@ -131,7 +131,15 @@ Set the `provider` in `config.yml` to `"openai"`. You can either:
 
 Recommended models: `gpt-5.4-mini` (fast and highly efficient), `gpt-5.4`, or `gpt-5.5`.
 
-### 3. Ollama
+### 3. DeepSeek
+Set the `provider` in `config.yml` to `"deepseek"`. You can either:
+- Paste your API key in the `api-key` field of `config.yml`.
+- Or set the `DEEPSEEK_API_KEY` environment variable.
+
+Recommended models: `deepseek-chat`.
+Default endpoint: `https://api.deepseek.com`
+
+### 4. Ollama
 For local model execution or hosting Ollama on another server.
 - Set `provider` to `"ollama"`.
 - Set `api-url` to your Ollama endpoint (e.g. `http://localhost:11434` or `http://192.168.1.100:11434`).

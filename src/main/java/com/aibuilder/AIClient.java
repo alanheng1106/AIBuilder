@@ -70,7 +70,7 @@ public class AIClient {
                 "  - Max JSON elements: " + maxElements + ".";
 
         return switch (provider) {
-            case "openai", "ollama" -> callOpenAI(systemInstruction, userPrompt);
+            case "openai", "ollama", "deepseek" -> callOpenAI(systemInstruction, userPrompt);
             default -> callGemini(systemInstruction, userPrompt);
         };
     }
@@ -141,9 +141,21 @@ public class AIClient {
     }
 
     private CompletableFuture<String> callOpenAI(String systemInstruction, String userPrompt) {
-        String defaultBase = "ollama".equals(provider) ? "http://localhost:11434" : "https://api.openai.com";
+        String defaultBase;
+        String path;
+        if ("ollama".equals(provider)) {
+            defaultBase = "http://localhost:11434";
+            path = "/v1/chat/completions";
+        } else if ("deepseek".equals(provider)) {
+            defaultBase = "https://api.deepseek.com";
+            path = "/chat/completions";
+        } else {
+            defaultBase = "https://api.openai.com";
+            path = "/v1/chat/completions";
+        }
+
         String baseUrl = (apiUrl == null || apiUrl.isBlank()) ? defaultBase : apiUrl.replaceAll("/$", "");
-        String url = baseUrl + "/v1/chat/completions";
+        String url = baseUrl.contains("/chat/completions") ? baseUrl : baseUrl + path;
 
         JsonObject requestJson = new JsonObject();
         requestJson.addProperty("model", model);
