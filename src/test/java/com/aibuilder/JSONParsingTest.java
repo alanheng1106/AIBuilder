@@ -32,6 +32,13 @@ public class JSONParsingTest {
     }
 
     @Test
+    public void testExtractJsonArray_trailingBrackets() {
+        String input = "[{\"x\": 0, \"y\": 1, \"z\": 2, \"type\": \"STONE\"}]]";
+        String result = AIClient.extractJsonArray(input);
+        assertEquals("[{\"x\":0,\"y\":1,\"z\":2,\"type\":\"STONE\"}]", result.replaceAll("\\s+", ""));
+    }
+
+    @Test
     public void testPlacementParsing() {
         String json = "[{\"x\":0,\"y\":1,\"z\":2,\"type\":\"OAK_PLANKS\"}]";
         Gson gson = new Gson();

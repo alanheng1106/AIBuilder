@@ -204,11 +204,54 @@ public class AIClient {
             if (trimmed.endsWith("```"))
                 trimmed = trimmed.substring(0, trimmed.length() - 3).trim();
         }
-        if (trimmed.startsWith("{")) {
-            int start = trimmed.indexOf('[');
-            int end = trimmed.lastIndexOf(']');
-            if (start != -1 && end != -1)
-                return trimmed.substring(start, end + 1);
+
+        int start = trimmed.indexOf('[');
+        if (start == -1) {
+            start = trimmed.indexOf('{');
+            if (start != -1) {
+                int arrayStart = trimmed.indexOf('[', start);
+                int arrayEnd = trimmed.lastIndexOf(']');
+                if (arrayStart != -1 && arrayEnd > arrayStart) {
+                    return trimmed.substring(arrayStart, arrayEnd + 1);
+                }
+            }
+            return trimmed;
+        }
+
+        int balance = 0;
+        int end = -1;
+        boolean inString = false;
+        boolean escape = false;
+
+        for (int i = start; i < trimmed.length(); i++) {
+            char c = trimmed.charAt(i);
+            if (escape) {
+                escape = false;
+                continue;
+            }
+            if (c == '\\') {
+                escape = true;
+                continue;
+            }
+            if (c == '"') {
+                inString = !inString;
+                continue;
+            }
+            if (!inString) {
+                if (c == '[') {
+                    balance++;
+                } else if (c == ']') {
+                    balance--;
+                    if (balance == 0) {
+                        end = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (end != -1) {
+            return trimmed.substring(start, end + 1);
         }
         return trimmed;
     }
