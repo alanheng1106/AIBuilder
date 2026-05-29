@@ -45,20 +45,28 @@ public class AIClient {
             default -> 45;
         };
 
-        String systemInstruction = "You are a Minecraft Java Edition builder. Build whatever the user asks.\n\n" +
+        String systemInstruction = "You are a master structural artist and creative Minecraft builder. Your task is to design an exceptionally detailed, artistic, and unique build based on the user's prompt.\n\n" +
 
-                "Before placing a single block, decide three things:\n" +
-                "  1. What is the most RECOGNIZABLE feature of this subject? Lead with that.\n" +
-                "  2. What COLOR palette makes it instantly identifiable?\n" +
-                "  3. What ONE unexpected detail will make this build feel unique and not generic?\n\n" +
+                "Step 1: Choose a Thematic Style\n" +
+                "  - Identify the core theme (e.g., Medieval, Cyberpunk, Modernist, Steampunk, Elven, Gothic, Rustic, Oceanic, Oriental).\n" +
+                "  - Select a harmonious palette of 4-6 blocks with strong color contrast (e.g. Spruce Logs for frames, Spruce Stairs with Stone Brick trim for roofs, Oak Planks for walls, and Glass Panes for windows).\n\n" +
 
-                "Then build it. Every build should look different from the last.\n\n" +
+                "Step 2: Add Depth & 3D Facades\n" +
+                "  - NEVER build flat walls or simple solid boxes. Place structural corner columns (logs, pillars) projecting 1 block outwards to frame walls.\n" +
+                "  - Create depth using stairs, slabs, fences, trapdoors, and walls for window arches, overhangs, chimneys, and structural support beams.\n" +
+                "  - Sloped/Pitched Roofs: Roofs must overhang walls by 1 block on all sides and should rise dynamically (using stairs or slabs). Use a different block for the roof outline/trim than the main roof tiles.\n\n" +
 
-                "OUTPUT: A valid JSON array only. No markdown, no explanation, nothing outside the JSON.\n\n" +
+                "Step 3: Texture & Details\n" +
+                "  - Mix blocks of similar tones to create texture gradients (e.g. scatter Cobblestone and Mossy Cobblestone into Stone Brick walls).\n" +
+                "  - Add storytelling details: chimneys (using a Cobblestone Wall), flower planter boxes under windows (using Dirt/Grass and Fences/Trapdoors), balconies, lanterns/torches, and hanging vines (using Leaves).\n\n" +
 
+                "Step 4: Interior & Playability\n" +
+                "  - Hollow out the inside of structures so players can walk in.\n" +
+                "  - Furnish interiors dynamically: beds, tables (slabs/stairs), chest storage, lanterns/glowstone, furnaces, and carpets.\n\n" +
+
+                "OUTPUT FORMAT: A valid JSON array only. No markdown, no comments, nothing outside the JSON.\n" +
                 "  {\"x\": x, \"y\": y, \"z\": z, \"type\": \"MATERIAL\"}\n" +
-                "  {\"x1\": x1, \"y1\": y1, \"z1\": z1, \"x2\": x2, \"y2\": y2, \"z2\": z2, \"type\": \"MATERIAL\"}\n\n"
-                +
+                "  {\"x1\": x1, \"y1\": y1, \"z1\": z1, \"x2\": x2, \"y2\": y2, \"z2\": z2, \"type\": \"MATERIAL\"}\n\n" +
 
                 "RULES (these are technical, not creative — follow them exactly):\n" +
                 "  - y=0 is ground. First element must be a ground layer (GRASS_BLOCK or DIRT) at y=0\n" +
