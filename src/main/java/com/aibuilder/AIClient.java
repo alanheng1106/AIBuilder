@@ -45,34 +45,13 @@ public class AIClient {
             default -> 45;
         };
 
-        String systemInstruction = "You are a master structural artist and creative Minecraft builder. Your task is to design an exceptionally detailed, artistic, and unique build based on the user's prompt.\n\n" +
-
-                "Step 1: Choose a Thematic Style\n" +
-                "  - Identify the core theme (e.g., Medieval, Cyberpunk, Modernist, Steampunk, Elven, Gothic, Rustic, Oceanic, Oriental).\n" +
-                "  - Select a harmonious palette of 4-6 blocks with strong color contrast (e.g. Spruce Logs for frames, Spruce Stairs with Stone Brick trim for roofs, Oak Planks for walls, and Glass Panes for windows).\n\n" +
-
-                "Step 2: Add Depth & 3D Facades\n" +
-                "  - NEVER build flat walls or simple solid boxes. Place structural corner columns (logs, pillars) projecting 1 block outwards to frame walls.\n" +
-                "  - Create depth using stairs, slabs, fences, trapdoors, and walls for window arches, overhangs, chimneys, and structural support beams.\n" +
-                "  - Sloped/Pitched Roofs: Roofs must overhang walls by 1 block on all sides and should rise dynamically (using stairs or slabs). Use a different block for the roof outline/trim than the main roof tiles.\n\n" +
-
-                "Step 3: Texture & Details\n" +
-                "  - Mix blocks of similar tones to create texture gradients (e.g. scatter Cobblestone and Mossy Cobblestone into Stone Brick walls).\n" +
-                "  - Add storytelling details: chimneys (using a Cobblestone Wall), flower planter boxes under windows (using Dirt/Grass and Fences/Trapdoors), balconies, lanterns/torches, and hanging vines (using Leaves).\n\n" +
-
-                "Step 4: Interior & Playability\n" +
-                "  - Hollow out the inside of structures so players can walk in.\n" +
-                "  - Furnish interiors dynamically: beds, tables (slabs/stairs), chest storage, lanterns/glowstone, furnaces, and carpets.\n\n" +
-
+        String systemInstruction = "You are a professional Minecraft building assistant. Design a build based on the user's prompt.\n\n" +
                 "OUTPUT FORMAT: A valid JSON array only. No markdown, no comments, nothing outside the JSON.\n" +
                 "  {\"x\": x, \"y\": y, \"z\": z, \"type\": \"MATERIAL\"}\n" +
                 "  {\"x1\": x1, \"y1\": y1, \"z1\": z1, \"x2\": x2, \"y2\": y2, \"z2\": z2, \"type\": \"MATERIAL\"}\n\n" +
-
-                "RULES (these are technical, not creative — follow them exactly):\n" +
-                "  - y=0 is ground. First element must be a ground layer (GRASS_BLOCK or DIRT) at y=0\n" +
-                "    covering the full footprint. No blocks may float without support below them.\n" +
-                "  - Material names must be valid Minecraft Java Edition SCREAMING_SNAKE_CASE.\n" +
-                "  - Do not use: OAK_WOOD_PLANK, WOODEN_DOOR, LOG, STEP, LEAVES, TORCH, DOUBLE_STEP.\n" +
+                "TECHNICAL RULES:\n" +
+                "  - Coordinates are relative to the player's position (0,0,0 is the player's foot level).\n" +
+                "  - Material names must be valid Minecraft Java Edition Material names in uppercase SCREAMING_SNAKE_CASE.\n" +
                 "  - Max size: " + maxDimension + "x" + maxDimension + "x" + maxDimension + ".\n" +
                 "  - Max total blocks: " + maxBlocks + ".\n" +
                 "  - Max JSON elements: " + maxElements + ".";
