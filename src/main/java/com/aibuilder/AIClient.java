@@ -253,6 +253,43 @@ public class AIClient {
         if (end != -1) {
             return trimmed.substring(start, end + 1);
         }
+
+        // Handle truncation: find the last fully closed object inside the array
+        int objectBalance = 0;
+        int lastCompletedEnd = -1;
+        inString = false;
+        escape = false;
+
+        for (int i = start + 1; i < trimmed.length(); i++) {
+            char c = trimmed.charAt(i);
+            if (escape) {
+                escape = false;
+                continue;
+            }
+            if (c == '\\') {
+                escape = true;
+                continue;
+            }
+            if (c == '"') {
+                inString = !inString;
+                continue;
+            }
+            if (!inString) {
+                if (c == '{') {
+                    objectBalance++;
+                } else if (c == '}') {
+                    objectBalance--;
+                    if (objectBalance == 0) {
+                        lastCompletedEnd = i;
+                    }
+                }
+            }
+        }
+
+        if (lastCompletedEnd != -1) {
+            return trimmed.substring(start, lastCompletedEnd + 1) + "\n]";
+        }
+
         return trimmed;
     }
 
